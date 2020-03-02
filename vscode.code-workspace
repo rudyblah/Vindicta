@@ -68,6 +68,7 @@
 			"_thisId",
 			"_thisType",
 			"BIS_fnc_reviveInit",
+			"BIS_fnc_sideColor",
 			"CBA_Settings_fnc_init",
 			"CBA_fnc_compatibleMagazines",
 			"CBA_fnc_notify",
@@ -281,8 +282,16 @@
 			"spawnGroup1",
 			"spawnGroup2",
 			"gGameMode",
-			"Dialog_fnc_hud_createSentence",
-			"gLUAP"
+			"gLUAP",
+			"pr0_fnc_dialogue_create",
+			"pr0_fnc_dialogue_createHUD",
+			"pr0_fnc_dialogue_createSentence",
+			"pr0_fnc_dialogue_registerDataSet",
+			"pr0_fnc_dialogue_removeHUD",
+			"pr0_fnc_dialogue_removeSentence",
+			"pr0_fnc_dialogue_setDataSets",
+			"pr0_fnc_dialogue_updateSentence",
+			"pr0_fnc_dialogue_common_bearingToID"
 		],
 		"sqflint.exclude": [
 			"OOP_light/OOP_light.hpp"
