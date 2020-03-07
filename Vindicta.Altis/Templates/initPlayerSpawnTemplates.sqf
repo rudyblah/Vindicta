@@ -21,6 +21,7 @@ T_SpawnPlayerVariants = [
 
 		comment "Add containers";
 		_this forceAddUniform "U_C_Poloshirt_blue";
+		_this addItemToUniform "ACRE_PRC343";
 		for "_i" from 1 to 10 do {_this addItemToUniform "11Rnd_45ACP_Mag";};
 		_this addHeadgear "H_Bandanna_gry";
 
@@ -54,6 +55,7 @@ T_SpawnPlayerVariants = [
 
 		comment "Add containers";
 		_this forceAddUniform "U_C_Poloshirt_redwhite";
+		_this addItemToUniform "ACRE_PRC343";
 		for "_i" from 1 to 10 do {_this addItemToUniform "9Rnd_45ACP_Mag";};
 		_this addHeadgear "H_Bandanna_gry";
 
@@ -87,6 +89,7 @@ T_SpawnPlayerVariants = [
 
 		comment "Add containers";
 		_this forceAddUniform "U_C_HunterBody_grn";
+		_this addItemToUniform "ACRE_PRC343";
 		for "_i" from 1 to 10 do {_this addItemToUniform "9Rnd_45ACP_Mag";};
 		_this addHeadgear "H_Bandanna_gry";
 
@@ -120,6 +123,7 @@ T_SpawnPlayerVariants = [
 
 		comment "Add containers";
 		_this forceAddUniform "U_OrestesBody";
+		_this addItemToUniform "ACRE_PRC343";
 		for "_i" from 1 to 10 do {_this addItemToUniform "9Rnd_45ACP_Mag";};
 		_this addHeadgear "H_Bandanna_gry";
 
@@ -154,6 +158,7 @@ T_SpawnPlayerVariants = [
 
 		comment "Add containers";
 		_this forceAddUniform "U_Marshal";
+		_this addItemToUniform "ACRE_PRC343";
 		for "_i" from 1 to 10 do {_this addItemToUniform "6Rnd_45ACP_Cylinder";};
 		_this addHeadgear "H_Bandanna_gry";
 
