@@ -33,7 +33,7 @@ gCombatTips = [
     "If in doubt, shoot one out.",
     "Do not stay behind AT and AA ... and also not in front.",
     "Once the pin is pulled, Mr. Grenade is no longer your friend.",
-    "A grenade is not medical equipment.",
+    "A bullet is not medical equipment.",
     "The enemy is not responsible for your ammo.",
     "Don't let the enemy capture your artillery.",
     "Carry a few liters of blood, it doesn't have to be yours.",
