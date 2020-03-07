@@ -789,12 +789,35 @@ FIX_LINE_NUMBERS()
 			&& {(['', _co] call unit_fnc_getUnitFromObjectHandle) != NULL_OBJECT}	// Object must be a valid unit OOP object (no shit spawned by zeus for now)
 			&& {alive _co}															// Object must be alive
 		};
-		_newUnit addAction [format ["<img size='1.5' image='\A3\ui_f\data\GUI\Rsc\RscDisplayMain\infodlcsowned_ca.paa' />  %1", "Add unit to group"], // title // pic: arrow pointing down
+		_newUnit addAction [format ["<img size='1.5' image='\A3\ui_f\data\GUI\Rsc\RscDisplayMain\infodlcsowned_ca.paa' /><img size='1.5' image='\A3\ui_f\data\GUI\Rsc\RscDisplayMain\menu_singleplayer_ca.paa' />  %1", "Take unit"], // title // pic: arrow pointing down and single man
 						{
 							isNil {
 								private _co = [7] call pr0_fnc_coneTarget;
 								if(!isNull _co) then {
 									private _args = [player, [_co]];
+									// Steal the unit to players group
+									REMOTE_EXEC_CALL_STATIC_METHOD("Garrison", "addUnitsToPlayerGroup", _args, ON_SERVER, NO_JIP);
+								};
+							}
+						},
+						0, // Arguments
+						0.1, // Priority
+						false, // ShowWindow
+						false, //hideOnUse
+						"", //shortcut
+						"call pr0_fnc_groupUnitCond", //condition
+						5, //radius
+						false, //unconscious
+						"", //selection
+						""]; //memoryPoint
+
+		// Action to add units group to player group
+		_newUnit addAction [format ["<img size='1.5' image='\A3\ui_f\data\GUI\Rsc\RscDisplayMain\infodlcsowned_ca.paa' /><img size='1.5' image='\A3\ui_f\data\GUI\Rsc\RscDisplayMain\menu_multiplayer_ca.paa' />  %1", "Take group"], // title // pic: arrow pointing down and three men
+						{
+							isNil {
+								private _co = [7] call pr0_fnc_coneTarget;
+								if(!isNull _co) then {
+									private _args = [player, units group _co];
 									// Steal the unit to players group
 									REMOTE_EXEC_CALL_STATIC_METHOD("Garrison", "addUnitsToPlayerGroup", _args, ON_SERVER, NO_JIP);
 								};
@@ -1353,7 +1376,7 @@ FIX_LINE_NUMBERS()
 			while {_i < _cCargoBoxes} do {
 				private _subcatid = selectRandom [T_CARGO_box_small, T_CARGO_box_medium];
 				private _newUnit = NEW("Unit", [_template ARG T_CARGO ARG _subcatid ARG -1 ARG ""]);
-				CALLM1(_newUnit, "setBuildResources", 160);
+				CALLM1(_newUnit, "setBuildResources", 50);
 				//CALLM1(_newUnit, "limitedArsenalEnable", true); // Make them all limited arsenals
 				if (CALL_METHOD(_newUnit, "isValid", [])) then {
 					if(canSuspend) then {
@@ -1533,7 +1556,7 @@ FIX_LINE_NUMBERS()
 		_i = 0;
 		while {_cCargoBoxes > 0 && _i < 3} do {
 			private _newUnit = NEW("Unit", [_template ARG T_CARGO ARG T_CARGO_box_medium ARG -1 ARG ""]);
-			CALLM1(_newUnit, "setBuildResources", 300);
+			CALLM1(_newUnit, "setBuildResources", 80);
 			//CALLM1(_newUnit, "limitedArsenalEnable", true); // Make them all limited arsenals
 			if (CALL_METHOD(_newUnit, "isValid", [])) then {
 				if(canSuspend) then {
