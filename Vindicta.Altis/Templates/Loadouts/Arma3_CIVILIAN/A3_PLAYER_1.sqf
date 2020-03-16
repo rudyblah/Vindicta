@@ -80,7 +80,7 @@ if(isDLCAvailable 1021790) then {
 };
 
 this forceAddUniform selectRandom _uniforms;
-
+this addItem "ACRE_PRC343";
 (selectRandomWeighted _gunsAndAmmo) params ["_gun", "_ammo", "_isPistol"];
 
 this addWeapon _gun;
