@@ -1,4 +1,4 @@
-name: Validate Test and Build
+name: Validate and Test
 on:
   push:
     branches-ignore: [master, development]
@@ -31,28 +31,4 @@ jobs:
         New-Item .\config\user_local_config.hpp -ItemType File
         ..\tools\SQF-VM\sqfvm.exe -a --no-execute-print --disable-macro-warnings --load . -i D:\a\Vindicta\Vindicta\Vindicta.Altis\Tests\RunTests.sqf
 
-  build:
-    runs-on: windows-latest
-    timeout-minutes: 5
-    needs: [validate, test]
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
-    - name: Build
-      run: |
-        $env:RUST_BACKTRACE=1
-        cd Vindicta-Addon
-        .\tools\buildv2.ps1
-        
-    - uses: actions/upload-artifact@v1
-      with:
-        name: build
-        path: Vindicta-Addon/release
-
-    - uses: actions/upload-artifact@v1
-      with:
-        name: dev
-        path: Vindicta-Addon/dev
     

@@ -201,6 +201,7 @@ CLASS("AICommander", "AI")
 		T_SETV("state", "update sensors");
 		T_SETV("stateStart", TIME_NOW);
 		#endif
+		FIX_LINE_NUMBERS()
 
 		// Update sensors
 		CALLM0(_thisObject, "updateSensors");
@@ -661,13 +662,20 @@ CLASS("AICommander", "AI")
 	} ENDMETHOD;
 
 	// Thread safe
+	// Remove all intel from _items that is known to _side, returning only that which is unknown
+	STATIC_METHOD("filterOutKnownIntel") {
+		params [P_THISCLASS, P_ARRAY("_items"), P_SIDE("_side")];
+		pr _ai = CALLSM1("AICommander", "getAICommander", _side);
+		pr _intelDb = GETV(_ai, "intelDB");
+		_items select {
+			!CALLM1(_intelDb, "isIntelAddedFromSource", _x)
+		}
+	} ENDMETHOD;
+
+	// Thread safe
 	// Call it from a non-player-commander thread to reveal intel to the AICommander of player side
 	STATIC_METHOD("revealIntelToPlayerSide") {
 		params ["_thisClass", ["_item", "", [""]]];
-
-		if (true) exitWith {
-			OOP_WARNING_0("revealIntelToPlayerSide is currently disabled!");
-		};
 
 		// Make a clone of this intel item in our thread
 		pr _itemClone = CLONE(_item);
@@ -1502,8 +1510,8 @@ CLASS("AICommander", "AI")
 		pr _group = NEW("Group", [_side ARG GROUP_TYPE_IDLE]);
 
 		// Try to spawn more units at the selected locations
-		pr _templateName = CALLM2(gGameMode, "getTemplateName", _side, "military");
-		pr _t = [_templateName] call t_fnc_getTemplate;
+		pr _t = CALLM2(gGameMode, "getTemplate", _side, "military");
+		//[_templateName] call t_fnc_getTemplate;
 
 		CALLM2(_group, "createUnitsFromTemplate", _t, T_GROUP_inf_rifle_squad);
 		CALLM1(_gar, "addGroup", _group);
@@ -1533,8 +1541,7 @@ CLASS("AICommander", "AI")
 		// Create some infantry group
 		pr _group = NEW("Group", [_side ARG GROUP_TYPE_IDLE]);
 		// Try to spawn more units at the selected locations
-		pr _templateName = CALLM2(gGameMode, "getTemplateName", _side, "military");
-		pr _t = [_templateName] call t_fnc_getTemplate;
+		pr _t = CALLM2(gGameMode, "getTemplate", _side, "military");
 
 		CALLM2(_group, "createUnitsFromTemplate", _t, T_GROUP_inf_rifle_squad);
 		CALLM2(_gar, "postMethodAsync", "addGroup", [_group]);
@@ -1782,7 +1789,7 @@ http://patorjk.com/software/taag/#p=display&f=Univers&t=ACTIONS
 	} ENDMETHOD;
 
 	METHOD("clientCreateLocation") {
-		params [P_THISOBJECT, P_NUMBER("_clientOwner"), P_POSITION("_posWorld"), P_STRING("_locType"), P_STRING("_locName"), P_OBJECT("_hBuildResSrc")];
+		params [P_THISOBJECT, P_NUMBER("_clientOwner"), P_POSITION("_posWorld"), P_STRING("_locType"), P_STRING("_locName"), P_OBJECT("_hBuildResSrc"), P_NUMBER("_buildResAmount")];
 
 		// Nullify vertical component, we use position ATL for locations anyway
 		pr _pos = +_posWorld;
@@ -1810,10 +1817,10 @@ http://patorjk.com/software/taag/#p=display&f=Univers&t=ACTIONS
 		// Remove build resources from player or vehicle
 		if (_hBuildResSrc isKindOf "man") then {
 			// Remove resources from player
-			REMOTE_EXEC_CALL_STATIC_METHOD("Unit", "removeInfantryBuildResources", [_hBuildResSrc ARG 100], _clientOwner, false);
+			REMOTE_EXEC_CALL_STATIC_METHOD("Unit", "removeInfantryBuildResources", [_hBuildResSrc ARG _buildResAmount], _clientOwner, false);
 		} else {
 			// Remove resources from vehicle
-			REMOTE_EXEC_CALL_STATIC_METHOD("Unit", "removeVehicleBuildResources", [_hBuildResSrc ARG 100], _clientOwner, false);
+			REMOTE_EXEC_CALL_STATIC_METHOD("Unit", "removeVehicleBuildResources", [_hBuildResSrc ARG _buildResAmount], _clientOwner, false);
 		};
 
 		// Create a little composition at this place
@@ -1825,7 +1832,7 @@ http://patorjk.com/software/taag/#p=display&f=Univers&t=ACTIONS
 		// Create the location
 		pr _args = [_pos, T_GETV("side")]; // Our side is creating this location
 		pr _loc = NEW_PUBLIC("Location", _args);
-		CALLM2(_loc, "setBorder", "circle", 50);
+		CALLM2(_loc, "setBorder", "circle", 100);
 		CALLM1(_loc, "setType", _locType);
 		CALLM1(_loc, "setName", _locName);
 		CALLM2(_loc, "processObjectsInArea", "House", true);
@@ -2401,65 +2408,91 @@ http://patorjk.com/software/taag/#p=display&f=Univers&t=CMDR%20AI
 		T_PRVAR(activeActions);
 		T_PRVAR(side);
 
-		//OOP_INFO_0("GENERATE PATROL ACTIONS");
+		// Already patrolling source garrisons
+		private _garrisonsAlreadyPatrolling = _activeActions select {
+			GET_OBJECT_CLASS(_x) == "PatrolCmdrAction"
+		} apply {
+			private _srcGarrId = GETV(_x, "srcGarrId");
+			CALLM1(_worldNow, "getGarrison", _srcGarrId)
+		};
 
-		// Limit amount of concurrent actions
-		T_PRVAR(activeActions);
-		pr _count = {GET_OBJECT_CLASS(_x) == "PatrolCmdrAction"} count _activeActions;
-		//OOP_INFO_1("  Existing patrol actions: %1", _count);
-		if (_count > CMDR_MAX_PATROL_ACTIONS) exitWith {[]};
-
-		// Take src garrisons from now, we don't want to consider future resource availability, only current.
+		// List of garrisons big enough to send out a patrol
 		private _srcGarrisons = CALLM(_worldNow, "getAliveGarrisons", [["military" ARG "police"]]) select { 
 			private _potentialSrcGarr = _x;
 
 			// Must be not already busy 
-			!CALLM(_potentialSrcGarr, "isBusy", []) and 
+			!CALLM(_potentialSrcGarr, "isBusy", [])
 			// Must be at a location
-			{ 
-				private _loc = CALLM(_potentialSrcGarr, "getLocation", []);
-				!IS_NULL_OBJECT(_loc) and 
-				{
+			&& { 
+				private _loc = CALLM0(_potentialSrcGarr, "getLocation");
+				!IS_NULL_OBJECT(_loc)
+				&& {
 					GETV(_loc, "type") in [LOCATION_TYPE_OUTPOST, LOCATION_TYPE_BASE, LOCATION_TYPE_AIRPORT]
 				}
-			} and 
-			// Must not be source of another inprogress patrol mission
-			{ 
-				T_PRVAR(activeActions);
-				_activeActions findIf {
-					GET_OBJECT_CLASS(_x) == "PatrolCmdrAction" and
-					{ GETV(_x, "srcGarrId") == GETV(_potentialSrcGarr, "id") }
-				} == NOT_FOUND
-			} and
+			}
 			// Must have minimum patrol available
-			{
-				private _overEff = GETV(_potentialSrcGarr, "efficiency") - EFF_MIN_EFF;
+			&& {
+				private _garEff = GETV(_potentialSrcGarr, "efficiency");
+				private _overEff = EFF_DIFF(_garEff, EFF_MIN_EFF);
 				// CALLM(_worldNow, "getOverDesiredEff", [_potentialSrcGarr]);
 				// Must have at least a minimum available eff
 				EFF_GTE(_overEff, EFF_MIN_EFF)
 			}
 		};
+		if(count _srcGarrisons == 0) exitWith { [] };
+
+		// Determine list of cities to patrol, excluding those in enemy hands, or already being patrolled
+		private _citiesToPatrol = CALLM(_worldNow, "getLocations", [[LOCATION_TYPE_CITY]]) select {
+			private _pos = GETV(_x, "pos");
+			CALLM2(_worldNow, "getDamageScore", _pos, 1000) < 0
+		};
+		if(count _citiesToPatrol == 0) exitWith { [] };
+
+		// Divide cities between locations
+		private _garrisonAssignments = _srcGarrisons apply { [_x, []] };
+		{
+			private _cityPos = GETV(_x, "pos");
+			private _garrDist = _garrisonAssignments apply { 
+				private _garr = _x#0;
+				private _loc = CALLM0(_garr, "getLocation");
+				// Scale distance so we give different area of influence based on location types
+				private _distMul = switch (GETV(_loc, "type")) do {
+					case LOCATION_TYPE_AIRPORT: { 1 };
+					case LOCATION_TYPE_BASE: { 1.2 };
+					case LOCATION_TYPE_OUTPOST: { 2 };
+					default { 1000 };
+				};
+				[
+					(GETV(_garr, "pos") distance _cityPos) * _distMul,
+					_x
+				]
+			};
+			_garrDist sort ASCENDING;
+			(_garrDist#0#1#1) pushBackUnique _x;
+		} forEach _citiesToPatrol;
+
+		// Generate new patrol actions for each locations set of cities
 
 		private _actions = [];
 		{
-			private _srcId = GETV(_x, "id");
-			private _srcPos = GETV(_x, "pos");
+			_x params ["_srcGarrison", "_cities"];
+			private _srcPos = GETV(_srcGarrison, "pos");
 
-			// Take tgt locations from future, so we take into account all in progress actions.
-			private _tgtLocations = CALLM(_worldNow, "getNearestLocations", [_srcPos ARG 2000 ARG [LOCATION_TYPE_CITY]]) apply { 
-				_x params ["_dist", "_loc"];
-				[_srcPos getDir GETV(_loc, "pos"), GETV(_loc, "id")]
+			private _orderedCities = _cities apply {
+				[_srcPos getDir GETV(_x, "pos"), GETV(_x, "id")]
 			};
-			if(count _tgtLocations > 0) then {
-				_tgtLocations sort ASCENDING;
-				private _routeTargets = _tgtLocations apply {
-					_x params ["_dir", "_locId"];
-					[TARGET_TYPE_LOCATION, _locId]
-				};
-				private _params = [_srcId, _routeTargets];
-				_actions pushBack (NEW("PatrolCmdrAction", _params));
+			_orderedCities sort ASCENDING;
+			private _routeTargets = _orderedCities apply {
+				_x params ["_dir", "_locId"];
+				[TARGET_TYPE_LOCATION, _locId]
 			};
-		} forEach _srcGarrisons;
+			private _params = [GETV(_srcGarrison, "id"), _routeTargets];
+			_actions pushBack (NEW("PatrolCmdrAction", _params));
+		} forEach (_garrisonAssignments select {
+			// Must not be already doing a patrol
+			_x params ["_srcGarrison", "_cities"];
+			!(_srcGarrison in _garrisonsAlreadyPatrolling) && {count _cities > 0}
+		});
 
 		OOP_INFO_MSG("Considering %1 Patrol actions from %2 garrisons", [count _actions ARG count _srcGarrisons]);
 
@@ -2681,8 +2714,7 @@ http://patorjk.com/software/taag/#p=display&f=Univers&t=CMDR%20AI
 			]
 		};
 
-		private _templateName = CALLM2(gGameMode, "getTemplateName", T_GETV("side"), "military");
-		private _t = [_templateName] call t_fnc_getTemplate;
+		private _t = CALLM2(gGameMode, "getTemplate", T_GETV("side"), "military");
 
 		// Try to spawn more units at the selected locations
 		if (_infMoreRequired > 0) then {
