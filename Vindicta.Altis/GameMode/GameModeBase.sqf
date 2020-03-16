@@ -45,6 +45,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 	VARIABLE_ATTR("tNameMilInd", [ATTR_SAVE]);
 	VARIABLE_ATTR("tNameMilEast", [ATTR_SAVE]);
 	VARIABLE_ATTR("tNamePolice", [ATTR_SAVE]);
+	VARIABLE_ATTR("tNameCivilian", [ATTR_SAVE_VER(16)]);
 
 	// Other values
 	VARIABLE_ATTR("enemyForceMultiplier", [ATTR_SAVE]);
@@ -53,8 +54,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 	VARIABLE_ATTR("savedSpecialGarrisons", [ATTR_SAVE_VER(11)]);
 
 	METHOD("new") {
-		params [P_THISOBJECT,	P_STRING("_tNameEnemy"), P_STRING("_tNamePolice"),
-								P_NUMBER("_enemyForcePercent")];
+		params [P_THISOBJECT, P_STRING("_tNameEnemy"), P_STRING("_tNamePolice"), P_STRING("_tNameCivilian"), P_NUMBER("_enemyForcePercent")];
 		T_SETV("name", "unnamed");
 		T_SETV("spawningEnabled", false);
 
@@ -82,6 +82,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 		T_SETV("tNameMilInd", "tAAF");
 		T_SETV("tNameMilEast", "tCSAT");
 		T_SETV("tNamePolice", "tPOLICE");
+		T_SETV("tNameCivilian", "tCivilian");
 
 		// Apply values from arguments
 		T_SETV("enemyForceMultiplier", 1);
@@ -91,6 +92,10 @@ CLASS("GameModeBase", "MessageReceiverEx")
 		if (_tNamePolice != "") then {
 			T_SETV("tNamePolice", _tNamePolice);
 		};
+		if (_tNameCivilian != "") then {
+			T_SETV("tNameCivilian", _tNameCivilian);
+		};
+		
 		T_SETV("enemyForceMultiplier", _enemyForcePercent/100);
 
 		T_SETV("locations", []);
@@ -179,7 +184,6 @@ CLASS("GameModeBase", "MessageReceiverEx")
 			// Add mission event handler to destroy vehicles in destroyed houses, gets triggered when house is destroyed
 			T_CALLM0("_initMissionEventHandlers");
 
-			missionNamespace setVariable["ACE_maxWeightDrag", 10000, true]; // fix loot crates being undraggable
 		};
 		if (HAS_INTERFACE || IS_HEADLESSCLIENT) then {
 			T_CALLM("initClientOrHCOnly", []);
@@ -214,14 +218,12 @@ CLASS("GameModeBase", "MessageReceiverEx")
 			//#endif
 
 			T_CALLM("initClientOnly", []);
-
-			CALLSM0("undercoverMonitor", "staticInit");
 		};
 		T_CALLM("postInitAll", []);
 		
 		PROFILE_SCOPE_START(GameModeEnd);
 	} ENDMETHOD;
-
+	
 	// Called regularly in its own thread to update gameplay
 	// states, mechanics etc. implemented by the Game Mode.
 	/* private */ METHOD("process") {
@@ -281,20 +283,18 @@ CLASS("GameModeBase", "MessageReceiverEx")
 			{
 				if (!IS_NULL_OBJECT(_x)) then {
 					private _sideCommander = GETV(_x, "side");
-					if (_sideCommander != _playerSide) then { // Enemies are smart
-						if (CALLM0(_loc, "isBuilt")) then {
+					// If it's player side, let it only know about cities
+					if (_type == LOCATION_TYPE_CITY) then {
+						OOP_INFO_1("  revealing to commander: %1", _sideCommander);
+						CALLM2(_x, "postMethodAsync", "updateLocationData", [_loc ARG CLD_UPDATE_LEVEL_TYPE ARG sideUnknown ARG false ARG false]);
+					} else {
+						if (_sideCommander != _playerSide && {CALLM0(_loc, "isBuilt")}) then { // Enemies are smart
 							// This part determines commander's knowledge about enemy locations at game init
 							// Only relevant for One AI vs Another AI Commander game mode I think
 							//private _updateLevel = [CLD_UPDATE_LEVEL_TYPE, CLD_UPDATE_LEVEL_UNITS] select (_sideCommander == _side);
 							OOP_INFO_1("  revealing to commander: %1", _sideCommander);
 							private _updateLevel = CLD_UPDATE_LEVEL_UNITS;
 							CALLM2(_x, "postMethodAsync", "updateLocationData", [_loc ARG _updateLevel ARG sideUnknown ARG false]);
-						};
-					} else {
-						// If it's player side, let it only know about cities
-						if (_type == LOCATION_TYPE_CITY) then {
-							OOP_INFO_1("  revealing to commander: %1", _sideCommander);
-							CALLM2(_x, "postMethodAsync", "updateLocationData", [_loc ARG CLD_UPDATE_LEVEL_TYPE ARG sideUnknown ARG false ARG false]);
 						};
 					};
 				};
@@ -392,10 +392,10 @@ CLASS("GameModeBase", "MessageReceiverEx")
 			CALLM2(gMessageLoopGameMode, "addProcessCategoryObject", "GameModeProcess", _thisObject);
 		};
 
-#ifndef _SQF_VM
+		#ifndef _SQF_VM
 		// Start a periodic check which will restart message loops if needed
 		[{CALLM0(_this#0, "_checkMessageLoops")}, [_thisObject], 2] call CBA_fnc_waitAndExecute;
-#endif
+		#endif
 		FIX_LINE_NUMBERS()
 	} ENDMETHOD;
 
@@ -417,6 +417,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 					OOP_ERROR_0("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 					OOP_ERROR_0("");
 
+					#ifdef RELEASE_BUILD
 					// Make a recursive dump of the last processed object
 					private _lastObject = GETV(_msgLoop, "lastObject");
 					if (IS_NULL_OBJECT(_lastObject)) then {
@@ -430,7 +431,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 							[_lastObject, 6] call OOP_objectCrashDump;	// 6 is max depth
 						};
 					};
-
+					#endif
 					_recovery = true;
 				};
 			};
@@ -438,20 +439,20 @@ CLASS("GameModeBase", "MessageReceiverEx")
 					"messageLoopCommanderInd", "messageLoopCommanderWest", "messageLoopCommanderEast"];
 
 		if (!_recovery) then {
-#ifndef _SQF_VM
+			#ifndef _SQF_VM
 			// If we have not initiated recovery, then it's fine, check same message loops after a few more seconds
 			[{CALLM0(_this#0, "_checkMessageLoops")}, [_thisObject], 0.5] call CBA_fnc_waitAndExecute;
-#endif
-FIX_LINE_NUMBERS()
+			#endif
+			FIX_LINE_NUMBERS()
 		} else {
 			// Broadcast notification
 			T_CALLM1("_broadcastCrashNotification", _crashedMsgLoops);
 
-#ifdef RELEASE_BUILD
+			#ifdef RELEASE_BUILD
 			// Send msg to game manager to perform emergency saving
 			CALLM2(gGameManager, "postMethodAsync", "serverSaveGameRecovery", []);
-#endif
-FIX_LINE_NUMBERS()
+			#endif
+			FIX_LINE_NUMBERS()
 		};
 	} ENDMETHOD;
 
@@ -474,11 +475,11 @@ FIX_LINE_NUMBERS()
 
 		// todo: send emails, deploy pigeons
 
-#ifndef _SQF_VM
+		#ifndef _SQF_VM
 		// Do it once in a while
 		[{CALLM1(_this#0, "_broadcastCrashNotification", _this#1)}, [_thisObject, _crashedMsgLoops], 20] call CBA_fnc_waitAndExecute;
-#endif
-FIX_LINE_NUMBERS()
+		#endif
+		FIX_LINE_NUMBERS()
 	} ENDMETHOD;
 
 	METHOD("_initMissionEventHandlers") {
@@ -530,6 +531,7 @@ FIX_LINE_NUMBERS()
 	/* protected virtual */ METHOD("initServerOnly") {
 		params [P_THISOBJECT];
 
+		T_CALLM0("postLoadServerOnly");
 	} ENDMETHOD;
 
 	/* protected virtual */ METHOD("initClientOrHCOnly") {
@@ -551,11 +553,23 @@ FIX_LINE_NUMBERS()
 		};
 		#endif
 		FIX_LINE_NUMBERS()
+
+		CALLSM0("undercoverMonitor", "staticInit");
 	} ENDMETHOD;
 
 	/* protected virtual */ METHOD("postInitAll") {
 		params [P_THISOBJECT];
 
+	} ENDMETHOD;
+
+	/* protected virtual */ METHOD("postLoadServerOnly") {
+		params [P_THISOBJECT];
+
+		// Add undercover items from Civ faction
+		private _civTemplate = T_CALLM1("getTemplate", civilian);
+		_civTemplate call t_fnc_addUndercoverItems;
+
+		missionNamespace setVariable["ACE_maxWeightDrag", 10000, true]; // fix loot crates being undraggable
 	} ENDMETHOD;
 
 	/* protected virtual */ METHOD("getLocationOwner") {
@@ -564,7 +578,7 @@ FIX_LINE_NUMBERS()
 	} ENDMETHOD;
 
 	// Returns template name for given side and faction
-	/* protected virtual */ METHOD("getTemplateName") {
+	/* public virtual */ METHOD("getTemplateName") {
 		params [P_THISOBJECT, P_SIDE("_side"), P_STRING("_faction")];
 
 		switch(_faction) do {
@@ -575,13 +589,20 @@ FIX_LINE_NUMBERS()
 					case WEST:			{ T_GETV("tNameMilWest") };
 					case EAST:			{ T_GETV("tNameMilEast") };
 					case INDEPENDENT:	{ T_GETV("tNameMilInd") }; //{"tRHS_AAF_2020"}; // { "tAAF" };
-					case CIVILIAN:		{ "tCIVILIAN" };
+					case CIVILIAN:		{ T_GETV("tNameCivilian") };
 					default				{ "tDEFAULT" };
 				}
 			};
 		};
 	} ENDMETHOD;
 
+	// Returns template for given side and faction
+	/* public virtual */METHOD("getTemplate") {
+		params [P_THISOBJECT, P_SIDE("_side"), P_STRING("_faction")];
+		private _templateName = T_CALLM2("getTemplateName", _side, _faction);
+		[_templateName] call t_fnc_getTemplate
+	} ENDMETHOD;
+	
 	/* protected virtual */ METHOD("initGarrison") {
 		params [P_THISOBJECT, P_OOP_OBJECT("_loc"), P_SIDE("_side")];
 
@@ -630,20 +651,6 @@ FIX_LINE_NUMBERS()
 
 		// Create a suspiciousness monitor for player
 		NEW("UndercoverMonitor", [_newUnit]);
-
-		pr0_fnc_coneTarget = {
-			params ["_range"];
-			private _tgts = (nearestObjects [position player, ["Man"], _range]) apply { 
-				[_x, vectorNormalized (position player vectorFromTo position _x) vectorCos getCameraViewDirection player]
-			} select { 
-				_x#1 > 0.9
-			};
-			if(count _tgts > 0) then {
-				_tgts#0#0
-			} else {
-				objNull
-			}
-		};
 
 		// Create scroll menu to talk to civilians
 		pr0_fnc_talkCond = { // I know I overwrite it every time but who cares now :/
@@ -1539,8 +1546,12 @@ FIX_LINE_NUMBERS()
 			
 			private _staticGroup = NEW("Group", [_side ARG GROUP_TYPE_VEH_STATIC]);
 			while {_cHMGGMG > 0} do {
-				private _variants = [T_VEH_stat_HMG_high, T_VEH_stat_GMG_high];
-				private _newUnit = NEW("Unit", [_template ARG T_VEH ARG selectrandom _variants ARG -1 ARG _staticGroup]);
+				private _variants = [T_VEH_stat_HMG_high];
+				// use GMG only if it's defined
+				private _tGMG = (_template select T_VEH) select T_VEH_stat_GMG_high;
+				if !(isNil "_tGMG") then { _variants = [T_VEH_stat_HMG_high, T_VEH_stat_GMG_high]; }; 
+
+				private _newUnit = NEW("Unit", [_template ARG T_VEH ARG selectRandom _variants ARG -1 ARG _staticGroup]);
 				CALL_METHOD(_newUnit, "createDefaultCrew", [_template]);
 				_cHMGGMG = _cHMGGMG - 1;
 			};
@@ -1637,8 +1648,7 @@ FIX_LINE_NUMBERS()
 		{
 			private _loc = _x;
 			private _side = GETV(_loc, "side");
-			private _templateName = CALLM2(gGameMode, "getTemplateName", _side, "");
-			private _template = [_templateName] call t_fnc_getTemplate;
+			private _template = CALLM2(gGameMode, "getTemplate", _side, "");
 
 			private _targetCInf = CALLM(_loc, "getUnitCapacity", [T_INF ARG [GROUP_TYPE_IDLE]]);
 
@@ -1921,6 +1931,9 @@ FIX_LINE_NUMBERS()
 		if(isNil{T_GETV("savedSpecialGarrisons")}) then {
 			T_SETV("savedSpecialGarrisons", []);
 		};
+		if(isNil{T_GETV("tNameCivilian")}) then {
+			T_SETV("tNameCivilian", "tCivilian");
+		};
 
 		// Create timer service
 		gTimerServiceMain = NEW("TimerService", [TIMER_SERVICE_RESOLUTION]); // timer resolution
@@ -2028,6 +2041,18 @@ FIX_LINE_NUMBERS()
 		// Refresh locations
 		CALLSM0("Location", "postLoad");
 
+		// SAVEBREAK >>>
+		// Bug in saves before 17 means enemy cmdr didn't know about cities, so reveal them all now
+		if(GETV(_storage, "version") < 17) then {
+			{
+				private _cmdr = _x;
+				{
+					CALLM2(_cmdr, "postMethodAsync", "updateLocationData", [_x ARG CLD_UPDATE_LEVEL_TYPE ARG sideUnknown ARG false ARG false]);
+				} forEach (GET_STATIC_VAR("Location", "all") select { GETV(_x, "type") == LOCATION_TYPE_CITY });
+			} forEach [T_GETV("AICommanderEast"), T_GETV("AICommanderInd")];
+		};
+		// <<< SAVEBREAK
+
 		// Cleanup dirty garrisons etc.
 		
 		// Cleanup broken garrisons
@@ -2069,6 +2094,9 @@ FIX_LINE_NUMBERS()
 		//CALLSM0("Location", "deleteEditorAllowedAreaMarkers");
 		// CALLSM0("Location", "deleteEditorObjects");
 
+		// Perform post load init
+		T_CALLM0("postLoadServerOnly");
+
 		// Unlock all message loops
 		{
 			private _msgLoop = T_GETV(_x);
@@ -2086,6 +2114,8 @@ FIX_LINE_NUMBERS()
 		{
 			T_CALLM1("syncPlayerInfo", _x);
 		} forEach allPlayers;
+
+		missionNamespace setVariable["ACE_maxWeightDrag", 10000, true]; // fix loot crates being undraggable
 
 		diag_log format [" - - - - - - - - - - - - - - - - - - - - - - - - - -"];		
 		diag_log format [" FINISHED LOADING GAME MODE: %1", _thisObject];

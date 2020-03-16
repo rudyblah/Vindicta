@@ -25,40 +25,29 @@ Saboteur_fnc_drawDebugMarkers =
 // This sets up a saboteur with appropriate gear
 Saboteur_fnc_initSaboteur =
 {
-	comment "Exported from Arsenal by billw";
+	// Lets apply our civ settings from selected faction template
+	private _civTemplate = CALLM1(gGameMode, "getTemplate", civilian);
+	private _templateClass = [_civTemplate, T_INF, T_INF_exp, -1] call t_fnc_select;
+	if ([_templateClass] call t_fnc_isLoadout) then {
+		[_this, _templateClass] call t_fnc_setUnitLoadout;
+	} else {
+		OOP_ERROR_0("Only loadouts are valid for Civilian T_INF_exp faction templates (not classes)");
+	};
 
-	comment "[!] UNIT MUST BE LOCAL [!]";
-	if (!local _this) exitWith {};
-
-	comment "Remove existing items";
-	removeAllWeapons _this;
-	removeAllItems _this;
-	removeAllAssignedItems _this;
-	removeUniform _this;
-	removeVest _this;
-	removeBackpack _this;
-	removeHeadgear _this;
-	removeGoggles _this;
-
-	comment "Add containers";
-	_this forceAddUniform "U_C_Poloshirt_salmon";
-	_this addBackpack "B_AssaultPack_blk";
 	_this addItemToBackpack "IEDLandSmall_Remote_Mag";
 	_this addItemToBackpack "IEDUrbanSmall_Remote_Mag";
-	_this addHeadgear "H_Bandanna_gry";
-
-	comment "Add weapons";
-
-	comment "Add items";
-	_this linkItem "ItemMap";
-	_this linkItem "ItemCompass";
-	_this linkItem "ItemWatch";
-	_this linkItem "ItemRadio";
-
-	comment "Set identity";
-	[_this,"GreekHead_A3_09","male02gre"] call BIS_fnc_setIdentity;
-
 	_this allowFleeing 0; // brave?
+	// Set unit skill
+	_this setSkill ["aimingAccuracy", 0.3];
+	_this setSkill ["aimingShake", 0.3];
+	_this setSkill ["aimingSpeed", 0.4];
+	_this setSkill ["commanding", 0.2];
+	_this setSkill ["courage", 1];
+	//_this setSkill ["endurance", 0.8];
+	_this setSkill ["general", 0.5];
+	_this setSkill ["reloadSpeed", 0.5];
+	_this setSkill ["spotDistance", 0.6];
+	_this setSkill ["spotTime", 0.3];
 };
 
 // Creates a set of waypoints for our saboteur

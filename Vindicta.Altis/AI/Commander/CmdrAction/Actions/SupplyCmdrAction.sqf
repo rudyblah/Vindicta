@@ -26,6 +26,7 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 	VARIABLE_ATTR("type", [ATTR_SAVE]);
 	// Amount - abstract value representing "how much" of the stuff to supply from 0-1.
 	VARIABLE_ATTR("amount", [ATTR_SAVE]);
+	VARIABLE_ATTR("cargo", [ATTR_SAVE_VER(16)]);
 	// Array of UI names for the types of supplies
 	STATIC_VARIABLE("SupplyNames");
 
@@ -49,6 +50,8 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 
 		// Target can be modified during the action, if the initial target dies, so we want it to save/restore.
 		T_SET_AST_VAR("targetVar", [TARGET_TYPE_GARRISON ARG _tgtGarrId]);
+
+		T_SETV("cargo", []);
 	} ENDMETHOD;
 	
 	// Our prepreation will include assigning our cargo
@@ -66,7 +69,7 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 			_fromStates,
 			_successState,
 			_detachedGarrIdVar,
-			T_CALLM0("calculateCargo")
+			T_GETV("cargo")
 		];
 		NEW("AST_AssignCargo", _astArgs)
 	} ENDMETHOD;
@@ -153,11 +156,6 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 			// Send the intel to some places that should "know" about it
 			T_CALLM("addIntelAt", [_world ARG GETV(_srcGarr, "pos")]);
 			T_CALLM("addIntelAt", [_world ARG GETV(_tgtGarr, "pos")]);
-
-			// Reveal it to player side
-			if (random 100 < 80) then {
-				CALLSM1("AICommander", "revealIntelToPlayerSide", _intel);
-			};
 
 			// Reveal some friendly locations near the destination to the garrison performing the task
 			private _detachedGarrId = T_GET_AST_VAR("detachedGarrIdVar");
@@ -296,6 +294,10 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 		private _baseScore = MAKE_SCORE_VEC(1, _scoreResource, 1, 1);
 		private _score = CALLM(_strategy, "getSupplyScore", [_thisObject ARG _baseScore ARG _worldNow ARG _worldFuture ARG _srcGarr ARG _tgtGarr ARG _effAllocated ARG _type ARG _amount]);
 		T_CALLM("setScore", [_score]);
+
+		// Calculate the cargo content
+		T_CALLM1("calculateCargo", _worldNow);
+
 		#ifdef OOP_INFO
 		private _str = format ["{""cmdrai"": {""side"": ""%1"", ""action_name"": ""Reinforce"", ""src_garrison"": ""%2"", ""tgt_garrison"": ""%3"", ""score_priority"": %4, ""score_resource"": %5, ""score_strategy"": %6, ""score_completeness"": %7}}", 
 			_side, LABEL(_srcGarr), LABEL(_tgtGarr), _score#0, _score#1, _score#2, _score#3];
@@ -341,9 +343,10 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 	
 
 	METHOD("calculateCargo") {
-		params [P_THISOBJECT];
+		params [P_THISOBJECT, P_OOP_OBJECT("_world")];
 		private _type = T_GETV("type");
 		private _amount = T_GETV("amount");
+		private _cargo = T_GETV("cargo");
 
 		// Cargo/inventory array format:
 		// 	[
@@ -352,22 +355,27 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 		//		[[mag, count],...],
 		//		[[backpack, count],...]
 		// 	]
+		#define CARGO_WEAPONS 0
+		#define CARGO_ITEMS 1
+		#define CARGO_MAGS 2
+		#define CARGO_BACKPACKS 3
+		_cargo set [CARGO_WEAPONS, []];
+		_cargo set [CARGO_ITEMS, []];
+		_cargo set [CARGO_MAGS, []];
+		_cargo set [CARGO_BACKPACKS, []];
+
 		switch (_type) do {
 			case ACTION_SUPPLY_TYPE_BUILDING: {
-				[
-					[],
-					[["vin_build_res_0", CALLSM2("SupplyCmdrAction", "randomAmount", 25, 50 * _amount)]],
-					[],
-					[]
-				]
+				_cargo set [CARGO_ITEMS, [
+					["vin_build_res_0", CALLSM2("SupplyCmdrAction", "randomAmount", 25, 50 * _amount)]
+				]];
 			};
 			case ACTION_SUPPLY_TYPE_AMMO: {
 				T_PRVAR(srcGarrId);
 				T_PRVAR(tgtGarrId);
 				private _srcGarr = CALLM(_world, "getGarrison", [_srcGarrId]);
 				private _side = GETV(_srcGarr, "side");
-				private _templateName = CALLM2(gGameMode, "getTemplateName", _side, "");
-				private _t = [_templateName] call t_fnc_getTemplate;
+				private _t = CALLM2(gGameMode, "getTemplate", _side, "military");
 				private _tInv = _t#T_INV;
 
 				// Add weapons and magazines
@@ -413,34 +421,24 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 						};
 					};
 				} forEach _arr;
-
-				[
-					_weapons,
-					[],
-					_mags,
-					[]
-				]
+				_cargo set [CARGO_WEAPONS, _weapons];
+				_cargo set [CARGO_MAGS, _mags];
 			};
 			case ACTION_SUPPLY_TYPE_EXPLOSIVES: {
-				[
-					[],
-					[
-						["IEDLandSmall_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 4, 10 * _amount)],
-						["IEDUrbanSmall_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 4, 10 * _amount)],
-						["IEDLandBig_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 10 * _amount)],
-						["IEDUrbanBig_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 10 * _amount)],
-						["DemoCharge_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 5 * _amount)],
-						["SatchelCharge_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 0, 5 * _amount)],
-						["TrainingMine_Mag", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 20 * _amount)],
-						["ACE_DeadManSwitch", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
-						["ACE_DefusalKit", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
-						["ACE_M26_Clacker", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
-						["ACE_Clacker", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
-						["MineDetector", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)]
-					],
-					[],
-					[]
-				]
+				_cargo set [CARGO_ITEMS, [
+					["IEDLandSmall_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 4, 10 * _amount)],
+					["IEDUrbanSmall_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 4, 10 * _amount)],
+					["IEDLandBig_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 10 * _amount)],
+					["IEDUrbanBig_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 10 * _amount)],
+					["DemoCharge_Remote_Mag", 		CALLSM2("SupplyCmdrAction", "randomAmount", 0, 5 * _amount)],
+					["SatchelCharge_Remote_Mag", 	CALLSM2("SupplyCmdrAction", "randomAmount", 0, 5 * _amount)],
+					["TrainingMine_Mag", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 20 * _amount)],
+					["ACE_DeadManSwitch", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
+					["ACE_DefusalKit", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
+					["ACE_M26_Clacker", 			CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
+					["ACE_Clacker", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)],
+					["MineDetector", 				CALLSM2("SupplyCmdrAction", "randomAmount", 5, 10 * _amount)]
+				]];
 			};
 			case ACTION_SUPPLY_TYPE_MEDICAL;
 			case ACTION_SUPPLY_TYPE_MISC: {
@@ -466,17 +464,10 @@ CLASS("SupplyCmdrAction", "TakeOrJoinCmdrAction")
 				};
 
 				_medical pushBack ["FirstAidKit", CALLSM2("SupplyCmdrAction", "randomAmount", 5, 15 * _amount)];
-
-				[
-					[],
-					_medical,
-					[],
-					[]
-				]
+				_cargo set [CARGO_ITEMS, _medical];
 			};
 		}
 	} ENDMETHOD;
-	
 
 ENDCLASS;
 

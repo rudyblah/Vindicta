@@ -253,6 +253,13 @@ CLASS("WorldModel", "Storable")
 		_damage
 	} ENDMETHOD;
 
+	METHOD("getDamageScore") {
+		params [P_THISOBJECT, P_POSITION("_pos"), P_NUMBER("_radius")];
+		private _rawDamage = T_CALLM("getDamage", [_pos ARG _radius]);
+		private _campaignProgress = CALLM0(gGameMode, "getCampaignProgress"); // 0..1
+		__DAMAGE_FUNCTION(_rawDamage, _campaignProgress)
+	} ENDMETHOD;
+
 	METHOD("addActivity") {
 		params [P_THISOBJECT, P_POSITION("_pos"), P_NUMBER("_activity")];
 		T_PRVAR(rawActivityGrid);
@@ -266,7 +273,7 @@ CLASS("WorldModel", "Storable")
 		MUTEX_SCOPED_LOCK(T_GETV("gridMutex")) {
 			T_PRVAR(activityGrid);
 			//_activity = CALLM(_activityGrid, "getMaxValueCircle", [_pos ARG _radius]); // Takes too long
-			_activity = CALLM2(_activityGrid, "getMaxValueSquareNumber", _pos, _radius);
+			_activity = CALLM2(_activityGrid, "getValueSquareSum", _pos, _radius);
 		};
 		_activity
 	} ENDMETHOD;
