@@ -6,7 +6,7 @@
 // !! Factions will be listed in UI in the same order as here !!
 
 // Military factions
-["Templates\Factions\BRIT.sqf", T_FACTION_Military]					call t_fnc_initializeTemplateFromFile;
+//["Templates\Factions\BRIT.sqf", T_FACTION_Military]					call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\AAF.sqf", 					T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\LDF.sqf", 					T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\NATO.sqf", 				T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
