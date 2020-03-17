@@ -18,9 +18,9 @@ _inf = []; _inf resize T_INF_size;
 _inf set [T_INF_SIZE-1, nil]; 								//Make an array full of nil
 _inf set [T_INF_DEFAULT, ["B_GEN_Soldier_F"]];					//Default infantry if nothing is found
 
-_inf set [T_INF_SL, ["Arma3_POLICE_1", "Arma3_POLICE_2", "Arma3_POLICE_3", "Arma3_POLICE_4", "Arma3_POLICE_5", "Arma3_POLICE_6", "Arma3_POLICE_7", "Arma3_POLICE_8", "Arma3_POLICE_9", "Arma3_POLICE_10"]];
-_inf set [T_INF_TL, ["Arma3_POLICE_1", "Arma3_POLICE_2", "Arma3_POLICE_3", "Arma3_POLICE_4", "Arma3_POLICE_5", "Arma3_POLICE_6", "Arma3_POLICE_7", "Arma3_POLICE_8", "Arma3_POLICE_9", "Arma3_POLICE_10"]];
-_inf set [T_INF_officer, ["Arma3_POLICE_1", "Arma3_POLICE_2", "Arma3_POLICE_3", "Arma3_POLICE_4", "Arma3_POLICE_5", "Arma3_POLICE_6", "Arma3_POLICE_7", "Arma3_POLICE_8", "Arma3_POLICE_9", "Arma3_POLICE_10"]];
+_inf set [T_INF_SL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE__3", "BRIT_POLICE__4", "BRIT_POLICE_5"]];
+_inf set [T_INF_TL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE__3", "BRIT_POLICE__4", "BRIT_POLICE_5"]];
+_inf set [T_INF_officer, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE__3", "BRIT_POLICE__4", "BRIT_POLICE_5"]];
 /*
 _inf set [T_INF_GL, ["B_GEN_Soldier_F"]];
 _inf set [T_INF_rifleman, ["B_GEN_Soldier_F"]];
