@@ -11,16 +11,27 @@ _array set [T_NAME, "tBritPolice"];
 _array set [T_DESCRIPTION, "British Police."];
 _array set [T_DISPLAY_NAME, "British Police"];
 _array set [T_FACTION, T_FACTION_Police];
-_array set [T_REQUIRED_ADDONS, ["A3_Characters_F"]];
+_array set [T_REQUIRED_ADDONS, [
+	"rhs_c_troops",		// RHSAFRF
+	"rhsusf_c_troops",	// RHSUSAF
+	"rhsgref_c_troops",	// RHSGREF
+	"uk3cb_baf_units_mtp",	// BAF Units
+	"uk3cb_baf_equipment",	// BAF Equipment
+	"uk3cb_baf_units_ace",	// BAF Ace Compat
+	"uk3cb_baf_units_rhs",	// BAF RHS Compat
+	"uk3cb_baf_vehicles_MAN", // BAF Vehicles
+	"uk3cb_baf_weapons_L110", // BAF Weaponry
+	"uk3cb_baf_weapons_ace" // BAF RHS Ammo Compat	
+]];
 
 //==== Infantry ====
 _inf = []; _inf resize T_INF_size;
 _inf set [T_INF_SIZE-1, nil]; 								//Make an array full of nil
 _inf set [T_INF_DEFAULT, ["B_GEN_Soldier_F"]];					//Default infantry if nothing is found
 
-_inf set [T_INF_SL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5"]];
-_inf set [T_INF_TL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5"]];
-_inf set [T_INF_officer, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5"]];
+_inf set [T_INF_SL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5", "BRIT_POLICE_6", "BRIT_POLICE_7", "BRIT_POLICE_8"]];
+_inf set [T_INF_TL, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5", "BRIT_POLICE_6", "BRIT_POLICE_7", "BRIT_POLICE_8"]];
+_inf set [T_INF_officer, ["BRIT_POLICE_1", "BRIT_POLICE_2", "BRIT_POLICE_3", "BRIT_POLICE_4", "BRIT_POLICE_5", "BRIT_POLICE_6", "BRIT_POLICE_7", "BRIT_POLICE_8"]];
 /*
 _inf set [T_INF_GL, ["B_GEN_Soldier_F"]];
 _inf set [T_INF_rifleman, ["B_GEN_Soldier_F"]];

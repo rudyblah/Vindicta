@@ -55,8 +55,3 @@ jobs:
       with:
         name: build
         path: Vindicta-Addon/release
-
-    - uses: actions/upload-artifact@v1
-      with:
-        name: dev
-        path: Vindicta-Addon/dev

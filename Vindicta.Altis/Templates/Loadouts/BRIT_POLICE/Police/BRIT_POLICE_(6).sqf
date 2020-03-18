@@ -7,22 +7,53 @@ removeBackpack this;
 removeHeadgear this;
 removeGoggles this;
 
-_RandomHeadgear = selectRandom ["H_Beret_gen_F","H_MilCap_gen_F"];
-this addHeadgear _RandomHeadgear;
-_RandomVest = selectRandom ["V_TacVest_gen_F", "V_Rangemaster_belt", "V_Safety_yellow_F"];
-this addVest _RandomVest;
-this forceAddUniform "U_B_GEN_Commander_F", "U_B_GEN_Soldier_F";
+private _headwear = [
+	"H_Cap_police",
+	"H_PASGT_basic_blue_F"
+];
 
-this addWeapon "hgun_Pistol_heavy_02_F";
-this addHandgunItem "acc_flashlight_pistol";
-this addHandgunItem "6Rnd_45ACP_Cylinder";
+private _goggles = [
+		"G_Spectacles", 
+		"G_Sport_Red",
+		"G_Squares_Tinted",
+		"G_Squares",
+		"G_Spectacles_Tinted",
+		"G_Shades_Black",
+		"G_Shades_Blue",
+		"G_Aviator"
+];
 
-this addItemToUniform "FirstAidKit";
-for "_i" from 1 to 4 do {this addItemToUniform "6Rnd_45ACP_Cylinder";};
-for "_i" from 1 to 2 do {this addItemToVest "ACE_Chemlight_HiBlue";};
-for "_i" from 1 to 4 do {this addItemToVest "Chemlight_blue";};
+comment "Add weapons";
+this addWeapon "UK3CB_BAF_L131A1";
+this addHandgunItem "UK3CB_BAF_9_17Rnd";
 
+comment "Add containers";
+this forceAddUniform "U_B_GEN_Soldier_F";
+this addVest "V_TacVest_blk_POLICE";
+this addBackpack "B_FieldPack_blk";
+
+comment "Add items to containers";
+for "_i" from 1 to 3 do {this addItemToUniform "UK3CB_BAF_9_17Rnd";};
+for "_i" from 1 to 10 do {this addItemToVest "ACE_fieldDressing";};
+for "_i" from 1 to 2 do {this addItemToVest "ACE_epinephrine";};
+for "_i" from 1 to 4 do {this addItemToVest "ACE_morphine";};
+this addItemToVest "ACE_splint";
+this addItemToVest "ACE_tourniquet";
+for "_i" from 1 to 2 do {this addItemToVest "SmokeShell";};
+for "_i" from 1 to 40 do {this addItemToBackpack "ACE_elasticBandage";};
+for "_i" from 1 to 10 do {this addItemToBackpack "ACE_adenosine";};
+for "_i" from 1 to 10 do {this addItemToBackpack "ACE_epinephrine";};
+for "_i" from 1 to 10 do {this addItemToBackpack "ACE_morphine";};
+for "_i" from 1 to 2 do {this addItemToBackpack "ACE_personalAidKit";};
+for "_i" from 1 to 5 do {this addItemToBackpack "ACE_salineIV";};
+for "_i" from 1 to 4 do {this addItemToBackpack "ACE_splint";};
+for "_i" from 1 to 3 do {this addItemToBackpack "ACE_tourniquet";};
+this addHeadgear selectRandom _headwear;
+this addGoggles selectRandom _goggles;
+
+comment "Add items";
 this linkItem "ItemMap";
 this linkItem "ItemCompass";
 this linkItem "ItemWatch";
-this linkItem "ItemRadio";
+this linkItem "ItemGPS";
+
