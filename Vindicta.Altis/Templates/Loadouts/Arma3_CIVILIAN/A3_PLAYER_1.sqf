@@ -7,77 +7,59 @@ removeBackpack this;
 removeHeadgear this;
 removeGoggles this;
 
-[this, selectRandom gVanillaFaces, "ace_novoice"] call BIS_fnc_setIdentity;
+[this, "", "ace_novoice"] call BIS_fnc_setIdentity;
 
 private _uniforms = [
-	"U_C_Poloshirt_blue",
-	"U_C_Poloshirt_burgundy",
-	"U_C_Poloshirt_redwhite",
-	"U_C_Poloshirt_salmon",
-	"U_C_Poloshirt_stripped",
-	"U_C_Poloshirt_tricolour",
-	"U_Marshal"
+	"tg_u_dadpat_floral",
+	"tg_u_dadpat_tacky",
+	"tg_u_dadpat_blue_hi",
+	"tg_u_dadpat_red_hi",
+	"tg_u_dadpat_grn_palm",
+	"tg_u_dadpat_prp_palm",
+    "tg_u_dadpat_blue_plaid",
+    "tg_u_dadpat_grn_plaid",
+    "tg_u_dadpat_orng_plaid",
+    "tg_u_dadpat_red_plaid",
+    "tg_u_dadpat_shorts_floral",
+    "tg_u_dadpat_shorts_tacky",
+    "tg_u_dadpat_shorts_blue_hi",
+    "tg_u_dadpat_shorts_red_hi",
+    "tg_u_dadpat_shorts_grn_palm",
+    "tg_u_dadpat_shorts_prp_palm",
+    "tg_u_dadpat_shorts_blue_plaid",
+    "tg_u_dadpat_shorts_grn_plaid",
+    "tg_u_dadpat_shorts_orng_plaid",
+    "tg_u_dadpat_shorts_red_plaid",
+    "tg_u_dadpat_tactical_floral",
+    "tg_u_dadpat_tactical_tacky",
+    "tg_u_dadpat_tactical_blue_hi",
+    "tg_u_dadpat_tactical_red_hi",
+    "tg_u_dadpat_tactical_grn_palm",
+    "tg_u_dadpat_tactical_prp_palm",
+    "tg_u_dadpat_tactical_blue_plaid",
+    "tg_u_dadpat_tactical_grn_plaid",
+    "tg_u_dadpat_tactical_orng_plaid",
+    "tg_u_dadpat_tactical_red_plaid"
+];
+
+private _headwear = [
+	"H_Cap_blk",
+	"H_Cap_blu",
+	"H_Cap_grn",
+	"H_Cap_oli",
+	"H_Cap_red",
+	"H_Cap_surfer",
+	"H_Cap_tan"
 ];
 
 private _gunsAndAmmo = [
 	// pistols
-	["hgun_Pistol_heavy_01_F", 	"11Rnd_45ACP_Mag", 		true],	1,
-	["hgun_ACPC2_F", 			"9Rnd_45ACP_Mag", 		true],	0.9,
-	["hgun_P07_F", 				"16Rnd_9x21_Mag", 		true],	0.8,
-	["hgun_Rook40_F", 			"16Rnd_9x21_Mag", 		true],	0.7,
-	// longs
-	["hgun_PDW2000_F", 			"30Rnd_9x21_Mag", 		false],	0.1
+	["UK3CB_BAF_L9A1", 		"UK3CB_BAF_9_13Rnd", 		true],	1,
+	["UK3CB_BAF_L107A1", 	"UK3CB_BAF_L107A1", 		true],	0.9,
+	["UK3CB_BAF_L117A2", 	"UK3CB_BAF_9_15Rnd", 		true],	0.8,
+	["UK3CB_BAF_L131A1", 	"UK3CB_BAF_9_17Rnd", 		true],	0.7
 ];
 
-// Apex
-if(isDLCAvailable 395180) then {
-	_uniforms = _uniforms + [
-		"U_I_C_Soldier_Bandit_5_F",
-		"U_I_C_Soldier_Bandit_3_F",
-		"U_C_Man_casual_1_F",
-		"U_C_Man_casual_2_F",
-		"U_C_Man_casual_3_F",
-		"U_C_man_sport_2_F",
-		"U_C_Man_casual_6_F",
-		"U_C_Man_casual_4_F",
-		"U_C_Man_casual_5_F"
-	];
-	_gunsAndAmmo = _gunsAndAmmo + [
-		// pistols
-		["hgun_Pistol_01_F", 	"10Rnd_9x21_Mag", 		true],	0.7,
-		["hgun_P07_khk_F", 		"16Rnd_9x21_Mag", 		true],	0.7,
-		["arifle_AKM_F", 		"30rnd_762x39_mag_f", 	false],	0.01,
-		["arifle_AKS_F", 		"30rnd_545x39_mag_f", 	false],	0.01
-	];
-};
-
-// Contact
-if(isDLCAvailable 1021790) then {
-	_uniforms = _uniforms + [
-		"U_C_Uniform_Farmer_01_F",
-		"U_C_E_LooterJacket_01_F",
-		"U_I_L_Uniform_01_tshirt_black_F",
-		"U_I_L_Uniform_01_tshirt_skull_F",
-		"U_I_L_Uniform_01_tshirt_sport_F",
-		"U_C_Uniform_Scientist_01_formal_F",
-		"U_C_Uniform_Scientist_01_F",
-		"U_C_Uniform_Scientist_02_formal_F",
-		"U_O_R_Gorka_01_black_F"
-	];
-	_gunsAndAmmo = _gunsAndAmmo + [
-		// longs
-		["sgun_HunterShotgun_01_F", 			"2Rnd_12Gauge_Pellets",		false],	0.3,
-		["sgun_HunterShotgun_01_sawedoff_F", 	"2Rnd_12Gauge_Pellets", 	false], 0.3,
-		["srifle_DMR_06_hunter_F", 				"10Rnd_Mk14_762x51_Mag", 	false], 0.2
-	];
-};
-
-// Laws of War
-if(isDLCAvailable 1021790) then {
-	_uniforms = _uniforms + [
-		"U_C_Mechanic_01_F"
-	];
-};
 
 this forceAddUniform selectRandom _uniforms;
 this addItem "ACRE_PRC343";
@@ -86,16 +68,14 @@ this addItem "ACRE_PRC343";
 this addWeapon _gun;
 
 if(_isPistol) then {
-	this addHandgunItem "acc_flashlight_pistol";
 	this addHandgunItem _ammo;
 } else {
-	this addWeaponItem [_gun, "acc_flashlight"];
 	this addWeaponItem [_gun, _ammo];
 };
 
 for "_i" from 1 to 5 do { this addItemToUniform _ammo };
 
-this addHeadgear "H_Bandanna_gry";
+this addHeadgear selectRandom _headwear;
 
 if(random 5 < 1) then {
 	this addGoggles selectRandomWeighted [
@@ -106,7 +86,7 @@ if(random 5 < 1) then {
 		"G_Spectacles_Tinted", 	1,
 		"G_Shades_Black", 		1,
 		"G_Shades_Blue", 		1,
-		"G_Aviator", 			0.01
+		"G_Aviator", 			1
 	];
 };
 

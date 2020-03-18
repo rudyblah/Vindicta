@@ -7,7 +7,7 @@ removeBackpack this;
 removeHeadgear this;
 removeGoggles this;
 
-[this, selectRandom gVanillaFaces, "ace_novoice"] call BIS_fnc_setIdentity;
+[this, "", "ace_novoice"] call BIS_fnc_setIdentity;
 
 private _uniforms = [
 	"tg_u_dadpat_floral",
