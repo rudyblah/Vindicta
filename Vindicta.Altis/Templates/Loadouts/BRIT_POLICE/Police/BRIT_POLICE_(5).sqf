@@ -9,6 +9,7 @@ removeGoggles this;
 
 private _headwear = [
 	"H_Cap_police",
+	"H_Cap_police",
 	"H_PASGT_basic_blue_F"
 ];
 
@@ -34,7 +35,7 @@ this addPrimaryWeaponItem selectRandom _optics;
 this addPrimaryWeaponItem "UK3CB_BAF_762_20Rnd";
 this addWeapon "UK3CB_BAF_L131A1";
 this addHandgunItem "UK3CB_BAF_9_17Rnd";
-
+this addWeapon "Binocular";
 comment "Add containers";
 this forceAddUniform "U_B_GEN_Soldier_F";
 this addVest "V_TacVest_blk_POLICE";

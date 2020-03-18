@@ -75,7 +75,10 @@ _civItems = [
     "ACE_SpraypaintRed",
     "ACE_surgicalKit",
     "ACE_tourniquet",
-    "ACE_wirecutter"
+    "ACE_wirecutter",
+    "ACRE_VHF30108SPIKE",
+	"ACRE_VHF30108",
+	"ACRE_VHF30108MAST"
 ];
 
 _civVehiclesOnlyNames = _civVehicles select { _x isEqualType "" };
@@ -159,7 +162,10 @@ _arsenal set[T_ARSENAL_items, [
     "ACE_surgicalKit",
     "ToolKit",
     "ACE_tourniquet",
-    "ACE_wirecutter"
+    "ACE_wirecutter",
+    "ACRE_VHF30108SPIKE",
+	"ACRE_VHF30108",
+	"ACRE_VHF30108MAST"
 ]];
 _arsenal set[T_ARSENAL_vests, []];
 _arsenal set[T_ARSENAL_backpacks, [
