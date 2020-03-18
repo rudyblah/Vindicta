@@ -109,7 +109,7 @@ jobs:
       uses: arma-actions/workshop-upload@v1
       with:
         appId: '107410'      # default
-        itemId: '1964186045' # Vindicta (Alpha) https://steamcommunity.com/sharedfiles/filedetails/?id=1964186045
+        itemId: '2025895567' # Vindicta (Alpha) https://steamcommunity.com/sharedfiles/filedetails/?id=1964186045
         contentPath: 'build/@vindicta'
         changelog: "${{ steps.release_info.outputs.changelog }}"
       env:

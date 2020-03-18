@@ -1,5 +1,5 @@
 #include "OOP_light\OOP_Light.h"
-
+#include "GREUH\UI\GREUH_interface.hpp"
 #include "config\global_config.hpp"
 
 author="Vindicta Team";
@@ -21,7 +21,7 @@ overviewTextLocked = "Start from zero and liberate the territory from enemy occu
 #ifdef EDITOR_PREVIEW
 enableDebugConsole = 2; // Everyone
 #else
-enableDebugConsole = 1; // Only admin or SP
+enableDebugConsole[] = { "76561198054435837","76561198044547771","76561198040326422" };
 #endif
 
 // Disables saving
