@@ -953,12 +953,12 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 				if(count (_tInv#T_INV_backpacks) > 0 && random 3 < 1) then {
 					_hO addBackpackCargoGlobal [selectRandom (_tInv#T_INV_backpacks), 1];
 				};
-				if(random 5 < 1) then {
-					_hO addItemCargoGlobal ["ItemMap", 1];
-				};
-				if(random 10 < 1) then {
-					_hO addItemCargoGlobal ["ItemCompass", 1];
-				};
+				//if(random 5 < 1) then {
+				//	_hO addItemCargoGlobal ["ItemMap", 1];
+				//};
+				//if(random 10 < 1) then {
+				//	_hO addItemCargoGlobal ["ItemCompass", 1];
+				//};
 				if (random 20 < 1) then {
 					_hO addItemCargoGlobal ["vin_pills", 20];
 				};
@@ -1023,16 +1023,16 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 				if (isClass (configfile >> "CfgPatches" >> "acre_main")) then {
 					// Array with item class name, count
 					pr _ACREclassNames = [
-										["ACRE_SEM52SL",2], // medium-range radio, similar to the 148 and 152
-										["ACRE_SEM70",4], // Long-range radio, is NOT a backpack, but needs to be put in a backpack.
-										["ACRE_PRC77",1], // Vietnam-era radio, needs to be put in a backpack.
+									//	["ACRE_SEM52SL",2], // medium-range radio, similar to the 148 and 152
+									//	["ACRE_SEM70",4], // Long-range radio, is NOT a backpack, but needs to be put in a backpack.
+									//	["ACRE_PRC77",1], // Vietnam-era radio, needs to be put in a backpack.
 										["ACRE_PRC343",6], // Shortest-range infantry radio. (400m-900m range, depending on terrain)
 										["ACRE_PRC152",3], //medium-range radio, 3-5km
-										["ACRE_PRC148",3], //medium-range radio, 3-5km
-										["ACRE_PRC117F",1], //Long range radio, is NOT a backpack, but needs to be put in a backpack. 10-20km
-										["ACRE_VHF30108SPIKE",1], // antenna for radio signal extension, with a spike to put it higher in the air.
-										["ACRE_VHF30108",3], // Just the antenna
-										["ACRE_VHF30108MAST",1] // Antenna with a mast.
+									//	["ACRE_PRC148",3], //medium-range radio, 3-5km
+										["ACRE_PRC117F",1] //Long range radio, is NOT a backpack, but needs to be put in a backpack. 10-20km
+									//	["ACRE_VHF30108SPIKE",1], // antenna for radio signal extension, with a spike to put it higher in the air.
+									//	["ACRE_VHF30108",3], // Just the antenna
+									//	["ACRE_VHF30108MAST",1] // Antenna with a mast.
 									];
 					{
 						if(random 10 < 7) then {
@@ -1106,7 +1106,7 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 							//["ACE_acc_pointer_green",4],
 							["ACE_UAVBattery",6],
 							["ACE_wirecutter",4],
-							["ACE_MapTools",12],
+						//	["ACE_MapTools",12],
 							["ACE_microDAGR",3],
 							//["ACE_MX2A",6], // Thermal imager
 							//["ACE_NVG_Gen1",6],
@@ -1122,21 +1122,21 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 							//["ACE_optic_SOS_PIP",2],
 							//["ACE_optic_LRPS_2D",2],
 							//["ACE_optic_LRPS_PIP",2],
-							["ACE_Altimeter",3],
-							["ACE_Sandbag_empty",10],
-							["ACE_SpottingScope",1],
+						//	["ACE_Altimeter",3],
+						//	["ACE_Sandbag_empty",10],
+						//	["ACE_SpottingScope",1],
 							//["ACE_SpraypaintBlack",5],
 							//["ACE_SpraypaintRed",5],
 							//["ACE_SpraypaintBlue",5],
 							//["ACE_SpraypaintGreen",5],
 							["ACE_EntrenchingTool",8],
-							["ACE_Tripod",1],
+						//	["ACE_Tripod",1],
 							//["ACE_Vector",6],
 							//["ACE_Yardage450",4],
 							//["ACE_IR_Strobe_Item",12],
-							["ACE_CableTie",12],
+						//	["ACE_CableTie",12],
 							//["ACE_Chemlight_Shield",12],
-							["ACE_DAGR",3],
+						//	["ACE_DAGR",3],
 							["ACE_Clacker",12],
 							["ACE_M26_Clacker",6],
 							["ACE_DefusalKit",4],
@@ -1145,11 +1145,11 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 							//["ACE_Flashlight_MX991",12],
 							//["ACE_Flashlight_KSF1",12],
 							//["ACE_Flashlight_XL50",12],
-							["ACE_EarPlugs",20],
-							["ACE_Kestrel4500",2],
-							["ACE_ATragMX",6],
-							["ACE_RangeCard",6],
-							["vin_build_res_0", 10]
+						//	["ACE_EarPlugs",20],
+						//	["ACE_Kestrel4500",2],
+						//	["ACE_ATragMX",6],
+						//	["ACE_RangeCard",6],
+							["vin_build_res_0", 15]
 						];
 						{
 							_x params ["_itemName", "_itemCount"];
