@@ -3,7 +3,12 @@
 #include "OOP_Light\OOP_Light.h"
 
 // Looks kind of empty since all was moved elsewhere, we need to remove the file probably
+[] execVM "GREUH\scripts\GREUH_activate.sqf";
+if (!isDedicated && hasInterface) then {
 
+} else {
+	setViewDistance 1600;
+};
 // Code which adds all objects to be edited by zeus
 if (isServer) then {  
     [] spawn { 
