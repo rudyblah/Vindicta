@@ -71,15 +71,18 @@ private _backpacks = [
 
 private _gunsAndAmmo = [
 	// pistols
-	["rhsusf_weap_m1911a1",		"rhsusf_mag_7x45acp_MHP", 		true],	1,
-	["rhsusf_weap_m9",			"rhsusf_mag_15Rnd_9x19_FMJ",	true],	0.9,
-	["rhsusf_weap_glock17g4",	"rhsusf_mag_17Rnd_9x19_FMJ", 	true],	0.8,
+	["rhsusf_weap_m1911a1",		"rhsusf_mag_7x45acp_MHP", 		true],	0.8,
+	["rhsusf_weap_m9",			"rhsusf_mag_15Rnd_9x19_FMJ",	true],	0.6,
+	["rhsusf_weap_glock17g4",	"rhsusf_mag_17Rnd_9x19_FMJ", 	true],	0.4,
+	["rhs_weap_m3a1",			"rhsgref_30rnd_1143x23_M1911B_SMG",	false],	0.3,
+	["rhs_weap_m1garand_sa43",	"rhsgref_8Rnd_762x63_M2B_M1rifle",	false],	0.3,
 	["rhs_weap_pp2000_folded", 	"rhs_mag_9x19mm_7n31_20", 		true],	0.2,
 	["SMG_05_F",				"30Rnd_9x21_Mag_SMG_02",		false],	0.2,
 	["rhsusf_weap_MP7A2",		"rhsusf_mag_40Rnd_46x30_FMJ",	false],	0.2,
 	["rhs_weap_M590_8RD",		"rhsusf_8Rnd_Slug",				false],	0.1,
 	["rhs_weap_M590_5RD",		"rhsusf_5Rnd_Slug",				false],	0.1,
-	["srifle_DMR_06_hunter_F",	"20Rnd_762x51_Mag",				false],	0.1
+	["srifle_DMR_06_hunter_F",	"20Rnd_762x51_Mag",				false],	0.1,
+	["rhs_weap_m4a1_carryhandle",	"rhs_mag_30Rnd_556x45_M855A1_Stanag",				false],	0.1
 ];
 
 

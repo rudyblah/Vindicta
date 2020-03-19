@@ -8,8 +8,8 @@ _array set [T_SIZE-1, nil];									//Make an array having the size equal to the
 
 // Name, description, faction, addons, etc
 _array set [T_NAME, "tMISFIT_US"];
-_array set [T_DESCRIPTION, "RHS standard US Army units."];
-_array set [T_DISPLAY_NAME, "RHS USAF"];
+_array set [T_DESCRIPTION, "Misfit Tactical's Custom US Army."];
+_array set [T_DISPLAY_NAME, "Misfit US Army"];
 _array set [T_FACTION, T_FACTION_Military];
 _array set [T_REQUIRED_ADDONS, [
 	"rhsusf_c_troops"	// RHSUSAF
