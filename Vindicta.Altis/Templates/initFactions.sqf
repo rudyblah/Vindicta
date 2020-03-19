@@ -6,6 +6,7 @@
 // !! Factions will be listed in UI in the same order as here !!
 
 // Military factions
+["Templates\Factions\MISFIT_US.sqf",			T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\BRIT.sqf",					T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\AAF.sqf", 					T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\LDF.sqf", 					T_FACTION_Military	]	call t_fnc_initializeTemplateFromFile;
@@ -30,6 +31,7 @@
 
 
 // Other factions
+["Templates\Factions\MISFIT_CIVILIAN.sqf", 		T_FACTION_Civ		]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\IRISH_CIVILIAN.sqf", 		T_FACTION_Civ		]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\CIVILIAN.sqf", 			T_FACTION_Civ		]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\WW2_CIVILIAN.sqf", 		T_FACTION_Civ		]		call t_fnc_initializeTemplateFromFile;
@@ -39,6 +41,7 @@
 ["Templates\Factions\GUERRILLA.sqf", 			T_FACTION_Guer		]		call t_fnc_initializeTemplateFromFile;
 
 // Police factions
+["Templates\Factions\US_POLICE.sqf", 			T_FACTION_Police	]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\BRIT_POLICE.sqf", 			T_FACTION_Police	]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\POLICE.sqf", 				T_FACTION_Police	]		call t_fnc_initializeTemplateFromFile;
 ["Templates\Factions\RHS_AAF_police.sqf", 		T_FACTION_Police	]		call t_fnc_initializeTemplateFromFile;

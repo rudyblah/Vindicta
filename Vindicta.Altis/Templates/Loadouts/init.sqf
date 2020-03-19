@@ -55,6 +55,7 @@ call compile preprocessFileLineNumbers "Templates\Loadouts\Arma3_POLICE\Police\i
 //Arma3_CIVILIAN
 call compile preprocessFileLineNumbers "Templates\Loadouts\Arma3_CIVILIAN\init.sqf";
 call compile preprocessFileLineNumbers "Templates\Loadouts\IRISH_CIVILIAN\init.sqf";
+call compile preprocessFileLineNumbers "Templates\Loadouts\MISFIT_CIVILIAN\init.sqf";
 //AAF_2010
 call compile preprocessFileLineNumbers "Templates\Loadouts\RHS_AAF\AAF_2010\init.sqf";
 call compile preprocessFileLineNumbers "Templates\Loadouts\RHS_AAF\AAF_2010_recon\init.sqf";
@@ -77,6 +78,7 @@ call compile preprocessFileLineNumbers "Templates\Loadouts\RHS_LDF_NATO\LDF_NATO
 //RHS_APD
 call compile preprocessFileLineNumbers "Templates\Loadouts\RHS_APD\Police\init.sqf";
 call compile preprocessFileLineNumbers "Templates\Loadouts\BRIT_POLICE\Police\init.sqf";
+call compile preprocessFileLineNumbers "Templates\Loadouts\US_POLICE\Police\init.sqf";
 //WW2_Heer
 call compile preprocessFileLineNumbers "Templates\Loadouts\WW2_Heer\Heer\init.sqf";
 call compile preprocessFileLineNumbers "Templates\Loadouts\WW2_Heer\Heer_Recon\init.sqf";
