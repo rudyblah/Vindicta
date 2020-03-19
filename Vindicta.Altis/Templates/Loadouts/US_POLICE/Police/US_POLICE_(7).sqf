@@ -41,10 +41,10 @@ private _PistolsAndAmmo = [
 (selectRandom _PistolsAndAmmo) params ["_pistol", "_pammo"];
 
 private _PrimaryAndAmmo = [
-	["rhs_weap_m4a1",			"20Rnd_762x51_Mag"],
-	["rhs_weap_m4a1_mstock",			"20Rnd_762x51_Mag"],
-	["rhs_weap_m4a1_carryhandle",			"20Rnd_762x51_Mag"],
-	["rhs_weap_m4a1_carryhandle_mstock",				"20Rnd_762x51_Mag"]
+	["rhs_weap_m4a1",			"rhs_mag_30Rnd_556x45_M855A1_Stanag"],
+	["rhs_weap_m4a1_mstock",			"rhs_mag_30Rnd_556x45_M855A1_Stanag"],
+	["rhs_weap_m4a1_carryhandle",			"rhs_mag_30Rnd_556x45_M855A1_Stanag"],
+	["rhs_weap_m4a1_carryhandle_mstock",				"rhs_mag_30Rnd_556x45_M855A1_Stanag"]
 ];
 (selectRandom _PrimaryAndAmmo) params ["_primary", "_ammo"];
 
@@ -73,7 +73,4 @@ this addHeadgear selectRandom _headwear;
 this addGoggles selectRandom _goggles;
 
 comment "Add items";
-this linkItem "ItemMap";
-this linkItem "ItemCompass";
-this linkItem "ItemWatch";
 this linkItem "ItemGPS";
