@@ -108,27 +108,30 @@ if(ceil random 100 <= 70) then {
 };
 if(ceil random 100 <= 70) then {
 	this addBackpack selectRandom _backpacks;
-	switch (ceil random 3) do {
-		case 1: {for "_i" from 1 to 20 do {this addItemToBackpack "_ammo";};};
-		case 2: { switch (ceil random 3) do {
-				case 1: {
+	_backpackloot = ceil Random 100;
+	switch (true) do {
+		case (_backpackloot <= 40): {for "_i" from 1 to 20 do {this addItemToBackpack _ammo;};};
+		case ((_backpackloot >= 41) && (_backpackloot <= 75)): { 
+			_bombloot = ceil Random 90;
+			switch (true) do {
+				case (_bombloot <= 30): {
 					this addItemToBackpack "ACE_Cellphone";
 					for "_i" from 1 to 4 do {this addItemToBackpack "IEDLandSmall_Remote_Mag";};
 					for "_i" from 1 to 2 do {this addItemToBackpack "rhs_ec400_sand_mag";};
 				};
-				case 2: {
+				case ((_bombloot >= 31) && (_bombloot <=60)): {
 					this addItemToBackpack "ACE_Cellphone";
 					for "_i" from 1 to 2 do {this addItemToBackpack "IEDUrbanBig_Remote_Mag";};
 					for "_i" from 1 to 2 do {this addItemToBackpack "rhs_ec400_sand_mag";};
 				};
-				case 3: {
+				case (_bombloot >= 61): {
 					this addItemToBackpack "ACE_Cellphone";
 					for "_i" from 1 to 9 do {this addItemToBackpack "DemoCharge_Remote_Mag";};
 					this addItemToBackpack "rhs_ec200_sand_mag";
 				};
 			};
 		};
-		case 3: {
+		case (_backpackloot >= 76): {
 			for "_i" from 1 to 40 do {this addItemToBackpack "ACE_elasticBandage";};
 			for "_i" from 1 to 4 do {this addItemToBackpack "ACE_adenosine";};
 			for "_i" from 1 to 6 do {this addItemToBackpack "ACE_epinephrine";};
