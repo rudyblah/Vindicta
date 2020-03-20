@@ -51,7 +51,3 @@ this addBackpack selectRandom [
 	"B_Messenger_Olive_F"
 ];
 
-this linkItem "ItemMap";
-this linkItem "ItemCompass";
-this linkItem "ItemWatch";
-this linkItem "ItemRadio";
