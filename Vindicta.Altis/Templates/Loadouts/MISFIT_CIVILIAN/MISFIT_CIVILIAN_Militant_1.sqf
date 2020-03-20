@@ -109,7 +109,7 @@ if(ceil random 100 <= 70) then {
 if(ceil random 100 <= 70) then {
 	this addBackpack selectRandom _backpacks;
 	switch (ceil random 3) do {
-		case 1: {for "_i" from 1 to 20 do {this addItemToBackpack "30Rnd_65x39_caseless_mag";};};
+		case 1: {for "_i" from 1 to 20 do {this addItemToBackpack "_ammo";};};
 		case 2: { switch (ceil random 3) do {
 				case 1: {
 					this addItemToBackpack "ACE_Cellphone";
