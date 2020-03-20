@@ -6,8 +6,8 @@ GREUH_allow_worldquality = true;
 
 // Permettre aux joueurs de modifier leurs escouades
 GREUH_allow_customsquads = true;
-GREUH_allow_platoonview = true;
-GREUH_allow_mapmarkers = true;
+GREUH_allow_platoonview = false;
+GREUH_allow_mapmarkers = false;
 GRLIB_side_friendly = WEST;
 GRLIB_color_friendly = "ColorBLUFOR";
 GRLIB_color_enemy = "ColorOPFOR";
