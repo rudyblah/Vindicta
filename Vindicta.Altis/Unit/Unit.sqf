@@ -1014,9 +1014,9 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 				} forEach _arr;
 
 				// Add some maps and radios for non-civilian units
-				{
-					_hO addItemCargoGlobal [_x, 4 + ( ceil random 10)];
-				} forEach ["ItemMap", "ItemCompass", "ItemRadio" ];
+			//	{
+			//		_hO addItemCargoGlobal [_x, 4 + ( ceil random 10)];
+			//	} forEach ["ItemMap", "ItemCompass", "ItemRadio" ];
 
 				// Add ACRE Radios
 				// We probably want them in all vehicles, not only in boxes
