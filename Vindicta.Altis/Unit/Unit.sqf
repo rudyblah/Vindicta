@@ -373,6 +373,7 @@ CLASS(UNIT_CLASS_NAME, "Storable")
 						// make it impossible to ace interact with this unit, may need better solution in the future
 						if (side _objectHandle != west) then {
 							[_objectHandle, _objectHandle] call ace_common_fnc_claim;
+							if ("rhsusf_ANPVS_14" in ((uniformItems _objecthandle) + (vestItems _objecthandle) + (backpackItems _objecthandle))) then {_objectHandle assignItem "rhsusf_ANPVS_14";};
 						};
 
 						// Set unit insignia
