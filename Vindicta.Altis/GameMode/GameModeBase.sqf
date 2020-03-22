@@ -507,6 +507,7 @@ CLASS("GameModeBase", "MessageReceiverEx")
 			if(alive _unit) then {
 				CALLM3(gGameMode, "savePlayerInfo", _uid, _unit, _name);
 			};
+			deleteVehicle (_this select 0);
 			false;
 		}];
 		#endif
